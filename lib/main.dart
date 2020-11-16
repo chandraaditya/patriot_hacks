@@ -21,12 +21,11 @@ class MyApp extends StatelessWidget {
               ),
               SizedBox(
                 height: 100,
-              )
-              ,
+              ),
               SizedBox(
                   width: 500,
-                  height: 400,
-                  child: MyHomePage()
+                  height: 600,
+                  child: SignUpForm()
               )
             ],
           ),
@@ -45,60 +44,42 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class SignUpForm extends StatefulWidget {
+  SignUpForm({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SignUpFormState createState() => _SignUpFormState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
+class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // TextField Controllers
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileNoController = TextEditingController();
   TextEditingController feedbackController = TextEditingController();
 
-  // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-    // Validate returns true if the form is valid, or false
-    // otherwise.
     if (_formKey.currentState.validate()) {
-      // If the form is valid, proceed.
       FeedbackForm feedbackForm = FeedbackForm(
           nameController.text,
           emailController.text,
           mobileNoController.text,
           feedbackController.text);
-
       FormController formController = FormController();
-
       _showSnackbar("Submitting Feedback");
-
-      // Submit 'feedbackForm' and save it in Google Sheets.
       formController.submitForm(feedbackForm, (String response) {
         print("Response: $response");
         if (response == FormController.STATUS_SUCCESS) {
-          // Feedback is saved succesfully in Google Sheets.
           _showSnackbar("Feedback Submitted");
         } else {
-          // Error Occurred while saving data in Google Sheets.
           _showSnackbar("Error Occurred!");
         }
       });
     }
   }
 
-  // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
     final snackBar = SnackBar(content: Text(message));
     _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -106,82 +87,146 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Form(
-                key: _formKey,
-                child:
-                Padding(padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        controller: nameController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Enter Valid Name';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            labelText: 'Name'
-                        ),
-                      ),
-                      TextFormField(
-                        controller: emailController,
-                        validator: (value) {
-                          if (!value.contains("@")) {
-                            return 'Enter Valid Email';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            labelText: 'Email'
-                        ),
-                      ),
-                      TextFormField(
-                        controller: mobileNoController,
-                        validator: (value) {
-                          if (value.trim().length != 10) {
-                            return 'Enter 10 Digit Mobile Number';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: 'Mobile Number',
-                        ),
-                      ),
-                      TextFormField(
-                        controller: feedbackController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Enter Valid Feedback';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(
-                            labelText: 'Feedback'
-                        ),
-                      ),
-                    ],
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white,
+            offset: Offset(10, 10)
+          ),
+          BoxShadow(
+            color: Colors.grey,
+          )
+        ]
+      ),
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(42, 100, 56, 1),
+        key: _scaffoldKey,
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Sign up",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 90,
+                      color: Colors.white,
                   ),
-                )
+                ),
+                Form(
+                    key: _formKey,
+                    child:
+                    Padding(padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          TextFormField(
+                            controller: nameController,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Enter Valid Name';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                                labelText: 'Name',
+                              labelStyle: TextStyle(color: Colors.white54),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                  )
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: emailController,
+                            validator: (value) {
+                              if (!value.contains("@") || !value.contains(".")) {
+                                return 'Enter Valid Email';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(color: Colors.white),
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                                labelText: 'Email',
+                              labelStyle: TextStyle(color: Colors.white54),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                  )
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: mobileNoController,
+                            validator: (value) {
+                              if (value.trim().length != 10) {
+                                return 'Enter 10 Digit Mobile Number';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(color: Colors.white),
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText: 'Mobile Number',
+                              labelStyle: TextStyle(color: Colors.white54),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                  )
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: feedbackController,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Enter Valid Feedback';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(color: Colors.white),
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                                labelText: 'Feedback',
+                              labelStyle: TextStyle(color: Colors.white54),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                  )
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                ),
+                ButtonTheme(
+                  minWidth: 300,
+                  height: 45,
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: OutlineButton(
+                      highlightElevation: 0,
+                      textColor: Color.fromRGBO(255, 255, 255, 1),
+                      onPressed:_submitForm,
+                      child: Text('Submit Feedback'),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              onPressed:_submitForm,
-              child: Text('Submit Feedback'),
-            ),
-          ],
+          ),
         ),
       ),
     );
